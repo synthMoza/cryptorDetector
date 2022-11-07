@@ -23,7 +23,7 @@ class EncryptorDetector
 
     static constexpr unsigned m_markFlags = FAN_MARK_ADD | FAN_MARK_MOUNT;
     static constexpr uint64_t m_markMask = FAN_OPEN | FAN_OPEN_PERM | FAN_ACCESS | FAN_ACCESS_PERM | FAN_MODIFY;    
-    static constexpr std::array<uint64_t, 5> m_markFlagsArray = {FAN_OPEN, FAN_OPEN_PERM, FAN_ACCESS, FAN_ACCESS_PERM, FAN_MODIFY};
+    static constexpr std::array<uint64_t, 5> m_markFlagsArray = {FAN_OPEN, FAN_OPEN_PERM, FAN_ACCESS, FAN_ACCESS_PERM, FAN_MODIFY}; // TODO: store flags in more "scalable" way
 
     // Value to monitor suspicious processes that open/read/write too much
     const unsigned m_fileIOSuspect = 25;
@@ -45,6 +45,8 @@ class EncryptorDetector
         EVENT_COUNT
     };
 
+    std::map<int, std::array<unsigned, EVENT_COUNT>> m_pidEventMap;
+    
     constexpr EventType FanotifyEvenToIdx(size_t type)
     {
         switch (type)
@@ -61,8 +63,6 @@ class EncryptorDetector
                 return EVENT_COUNT; // error
         }
     }
-
-    std::map<int, std::array<unsigned, EVENT_COUNT>> m_pidEventMap;
 
     std::string GetFilenameByFd(int fd)
     {
@@ -179,7 +179,6 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    
     try
     {
         EncryptorDetector detector(argv[1]);

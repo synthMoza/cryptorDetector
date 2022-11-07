@@ -60,7 +60,7 @@ constexpr inline bool IsEmpty(fanotify_event_metadata& metadata) noexcept
 /**
  * @brief Fanotify Wrapper gives C++ API for C functions related to fanotify
  */
-class FanotifyWrapper
+class FanotifyWrapper final
 {
     pollfd m_fds[NFDS]; // pollfd struct for futher polling between stdin and fanotify fd
     int m_notificationGroupFd; // file descriptor to access fanotify API
@@ -80,7 +80,7 @@ class FanotifyWrapper
      * @param metadata given fanotify metadata
      * @param access type of responce (FAN_ACCESS or FAN_DENY)
      */
-    void Response(fanotify_event_metadata& metadata, unsigned access) const;
+    void Response(const fanotify_event_metadata& metadata, unsigned access) const;
 public:
     FanotifyWrapper(unsigned flags, unsigned event_f_flags);
     
@@ -157,14 +157,14 @@ public:
      * 
      * @param metadata given event metadata
      */
-    void ResponseAllow(fanotify_event_metadata& metadata) const;
+    void ResponseAllow(const fanotify_event_metadata& metadata) const;
 
     /**
      * @brief Deny fanotify event
      * 
      * @param metadata given event metadata
      */
-    void ResponseDeny(fanotify_event_metadata& metadata) const;
+    void ResponseDeny(const fanotify_event_metadata& metadata) const;
 
     ~FanotifyWrapper() {}
 };

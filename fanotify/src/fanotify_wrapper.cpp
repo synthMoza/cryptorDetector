@@ -95,7 +95,7 @@ bool FanotifyWrapper::WaitForEvent()
     return false; // unreachable code
 }
 
-void FanotifyWrapper::Response(fanotify_event_metadata& metadata, unsigned access) const
+void FanotifyWrapper::Response(const fanotify_event_metadata& metadata, unsigned access) const
 {
     LOG("enter");
 
@@ -110,14 +110,14 @@ void FanotifyWrapper::Response(fanotify_event_metadata& metadata, unsigned acces
     LOG("success");
 }
 
-void FanotifyWrapper::ResponseAllow(fanotify_event_metadata& metadata) const
+void FanotifyWrapper::ResponseAllow(const fanotify_event_metadata& metadata) const
 {
     LOG("enter");
     Response(metadata, FAN_ACCESS);
     LOG("success");
 }
 
-void FanotifyWrapper::ResponseDeny(fanotify_event_metadata& metadata) const
+void FanotifyWrapper::ResponseDeny(const fanotify_event_metadata& metadata) const
 {
     LOG("enter");
     Response(metadata, FAN_DENY);

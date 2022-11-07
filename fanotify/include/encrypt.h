@@ -21,7 +21,7 @@ class Encryptor final
         Encrypt given file
         @param fileName file name (recursive or absolute path)
     */
-    void EncryptFile(std::string fileName)
+    void EncryptFile(const std::string& fileName)
     {
         std::vector<char> buffer(m_blockSize); 
         std::ifstream fileInput(fileName);
@@ -57,7 +57,7 @@ class Encryptor final
         Encrypt given directory recursively
         @param dirName directory name (recursive or absolute path)
     */
-    void EncryptDirectory(std::string dirName)
+    void EncryptDirectory(const std::string& dirName)
     {
         using directory_iterator = std::filesystem::directory_iterator;
         for (auto& directoryEntry : directory_iterator(dirName))
@@ -82,7 +82,7 @@ public:
 
         @param name path to the file/directory
     */
-    void Encrypt(std::string name)
+    void Encrypt(const std::string& name)
     {
         // check for existence, throw exception if doesn't exist
         if (!std::filesystem::exists(name))
