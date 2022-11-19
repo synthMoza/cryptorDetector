@@ -8,7 +8,7 @@ int main(int argc, char* argv[])
 {
     if (argc != 3)
     {
-        std::cerr << "Usage: ./encryptor <path> <key>" << std::endl;
+        std::cerr << "Usage: ./encryptor <key> <path>" << std::endl;
         return -1;
     }
 
