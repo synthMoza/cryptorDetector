@@ -31,7 +31,7 @@ bool FanotifyWrapper::WaitForEvent()
 {
     while (true)
     {
-        auto pollNum = poll(m_fds, NFDS, POLL_TIMEOUT_MS);
+        auto pollNum = poll(m_fds, NFDS, -1);
         
         if (pollNum < 0 && errno != EINTR)
             throw std::runtime_error("poll error");

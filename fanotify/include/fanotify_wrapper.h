@@ -17,8 +17,6 @@
 #include <cstddef>
 #include <cstring>
 #include <vector>
-#include <array>
-#include <ranges>
 #include <iostream>
 
 namespace fn
@@ -117,10 +115,8 @@ public:
 };
 
 constexpr nfds_t NFDS = 2; // number of file descriptors for poll
-constexpr size_t STDIN_FD_IDX = 0;
+constexpr size_t STDIN_FD_IDX = STDIN_FILENO;
 constexpr size_t FANOTIFY_FD_IDX = 1;
-
-constexpr int POLL_TIMEOUT_MS = 5000;
 
 /**
  * @brief Event Container incapsulates events on current bufferized read ans allows to iterate over them easily

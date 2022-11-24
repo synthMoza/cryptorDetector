@@ -17,7 +17,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(SOURCE_DIR src)
 set(INCLUDE_DIR include)
 
-set(ENCRYPT_SOURCE ${SOURCE_DIR}/encrypt.cpp)
+set(ENCRYPT_SOURCE ${SOURCE_DIR}/encrypt.cpp ${SOURCE_DIR}/encryptor.cpp)
 set(FANOTIFY_SOURCE ${SOURCE_DIR}/fanotify_wrapper.cpp ${SOURCE_DIR}/fanotify.cpp)
 
 # encryptor executable
