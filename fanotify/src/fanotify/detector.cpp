@@ -119,9 +119,10 @@ void EncryptorDetector::ProcessEvent(fanotify_event_metadata& event)
             if (id == FAN_OPEN || id == FAN_OPEN_PERM)
             {
                 // add file to database
-                std::thread thread([&](){
-                    m_fileDb.AddFile(fileName.c_str(), event.pid);
-                });
+                std::cout << "add file by pid=" << event.pid << ", name=" << fileName << std::endl;
+                std::thread thread([&](const char* name, int pid){
+                    m_fileDb.AddFile(name, pid);
+                }, fileName.c_str(), event.pid);
 
                 thread.detach();
             }
@@ -240,7 +241,6 @@ void EncryptorDetector::Launch()
                     }, pid);
 
                     thread.detach();
-                    
                 }
             }
 

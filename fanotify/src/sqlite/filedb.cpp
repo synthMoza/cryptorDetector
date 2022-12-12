@@ -20,7 +20,7 @@ void FileDB::AddFile(const char* path, int pid)
 
     // read file as blob
     std::ifstream inputFile(path, std::ios::binary);
-    std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(inputFile), {});
+    std::vector<char> buffer(std::istreambuf_iterator<char>(inputFile), {});
 
     // prepare cmd
     // table columns: 'path', 'content', 'pid'
@@ -69,7 +69,9 @@ std::vector<std::string> FileDB::GetFilesFromPid(int pid)
 
     int res = 0;
     while ((res = stmt.Step()) == SQLITE_ROW)
+    {
         files.push_back(std::string((char*) stmt.ColumnText(0))); // files can be always read like char* (not unsigned)
+    }
 
     if (res != SQLITE_DONE)
         CHECK_SQL(res);

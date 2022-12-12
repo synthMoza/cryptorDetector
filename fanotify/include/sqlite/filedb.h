@@ -22,8 +22,8 @@ class FileDB : public DataBase
     static constexpr const char* m_insertSql = "INSERT INTO files( path, content, pid ) VALUES(?, ?, ?);";
     static constexpr const char* m_selectFileByPath = "SELECT * FROM files WHERE path = ?;";
     static constexpr const char* m_ifExists = "SELECT * FROM files WHERE path = ?;";
-    static constexpr const char* m_delete = "DELETE FROM files WHERE path = ?";
-    static constexpr const char* m_selectFilesByPid = "SELECT * FROM files WHERE pid = ?";
+    static constexpr const char* m_delete = "DELETE FROM files WHERE path = ?;";
+    static constexpr const char* m_selectFilesByPid = "SELECT * FROM files WHERE pid = ?;";
 public:
     FileDB(const char* path) : DataBase(path)
     {

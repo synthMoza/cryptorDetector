@@ -20,7 +20,7 @@ void Encryptor::EncryptFile(const std::string& fileName)
         Write & read operations on the same file are quite tricky in C++. WE write this program for linux, so
         to carefully encrypt file, use low-level C operations instead of file streams in C++
     */
-    std::array<char, m_blockSize> buffer;    
+    std::array<char, m_blockSize> buffer;
 
     int inputFd = open(fileName.c_str(), O_RDONLY);
     if (inputFd < 0)
