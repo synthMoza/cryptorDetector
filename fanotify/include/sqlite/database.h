@@ -4,6 +4,8 @@
 #include <stdexcept>
 #include <string>
 
+#include <sys/stat.h>
+
 #include "sqlite3.h"
 #include "error_handling.h"
 #include "statement.h"
@@ -24,6 +26,11 @@ public:
             std::string errorString = "Failed to open/create database: ";
             throw std::runtime_error(errorString + sqlite3_errmsg(m_db));
         }
+
+        // restrict access to this database
+        err = chmod(path, 0000);
+        if (err < 0)
+            throw std::runtime_error("Can't restrict access to database");
     }
     
     void Exec(const char* sql, sqlite3_callback callback = nullptr, void* data = nullptr)

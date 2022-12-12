@@ -217,6 +217,30 @@ void EncryptorDetector::Launch()
                     TRACE("Suspicious pid has been killed successfully");
                     std::cout << "Suspicious pid " << pid << " has been terminated" << std::endl;
                     pidsToRemove.push_back(pid);
+
+                    std::thread thread([&](int procPid){
+                        // restore files that were opened by this pid
+                        auto openedFiles = m_fileDb.GetFilesFromPid(procPid);
+                        if (openedFiles.empty())
+                        {
+                            std::cout << "Encryptor didn't open any files or can't restore any encrypted file";
+                        }
+                        else
+                        {
+                            for (auto& file : openedFiles)
+                            {
+                                std::ofstream fileStream(file);
+                                // find content in db
+                                auto content = m_fileDb.GetFileContent(file.c_str());
+                                fileStream.write((char*) content.data(), content.size());
+
+                                std::cout << "Succesfully restored file: " << file << std::endl;
+                            }
+                        }
+                    }, pid);
+
+                    thread.detach();
+                    
                 }
             }
 

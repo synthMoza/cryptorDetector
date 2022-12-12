@@ -3,6 +3,7 @@
 
 #include <sstream>
 #include <fstream>
+#include <vector>
 
 #include "database.h"
 
@@ -22,6 +23,7 @@ class FileDB : public DataBase
     static constexpr const char* m_selectFileByPath = "SELECT * FROM files WHERE path = ?;";
     static constexpr const char* m_ifExists = "SELECT * FROM files WHERE path = ?;";
     static constexpr const char* m_delete = "DELETE FROM files WHERE path = ?";
+    static constexpr const char* m_selectFilesByPid = "SELECT * FROM files WHERE pid = ?";
 public:
     FileDB(const char* path) : DataBase(path)
     {
@@ -32,7 +34,8 @@ public:
     void DeleteFile(const char* path);
     void AddFile(const char* path, int pid);
 
-    std::string GetFileContent(const char* path);
+    std::basic_string<unsigned char> GetFileContent(const char* path);
+    std::vector<std::string> GetFilesFromPid(int pid);
 };
 
 }

@@ -41,9 +41,9 @@ bool FileDB::IsExists(const char* path)
     return (stmt.Step() == SQLITE_ROW);
 }
 
-std::string FileDB::GetFileContent(const char* path)
+std::basic_string<unsigned char> FileDB::GetFileContent(const char* path)
 {
-    std::string fileContent;
+    std::basic_string<unsigned char> fileContent;
 
     auto stmt = PrepareV2(m_selectFileByPath);
     stmt.Bind(1, path);
@@ -51,8 +51,7 @@ std::string FileDB::GetFileContent(const char* path)
     int res = 0;
     while ((res = stmt.Step()) == SQLITE_ROW)
     {
-        for (int i = 0; i < res; ++i)
-            std::cout << stmt.ColumnText(i) << std::endl;
+        fileContent += stmt.ColumnText(1);
     }
 
     if (res != SQLITE_DONE)
@@ -60,3 +59,21 @@ std::string FileDB::GetFileContent(const char* path)
     
     return fileContent;
 }
+
+std::vector<std::string> FileDB::GetFilesFromPid(int pid)
+{
+    std::vector<std::string> files;
+
+    auto stmt = PrepareV2(m_selectFilesByPid);
+    stmt.Bind(1, pid);
+
+    int res = 0;
+    while ((res = stmt.Step()) == SQLITE_ROW)
+        files.push_back(std::string((char*) stmt.ColumnText(0))); // files can be always read like char* (not unsigned)
+
+    if (res != SQLITE_DONE)
+        CHECK_SQL(res);
+
+    return files;
+}
+
