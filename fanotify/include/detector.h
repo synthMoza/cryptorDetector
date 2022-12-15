@@ -3,6 +3,9 @@
 
 #include <fanotify_wrapper.h>
 #include <sqlite/filedb.h>
+#include <fanotify_helpers.h>
+#include <config.h>
+#include <tracer.h>
 
 // c++ include
 #include <iostream>
@@ -12,6 +15,7 @@
 #include <queue>
 #include <chrono>
 #include <fstream>
+#include <vector>
 
 // c include
 #include <limits.h>
@@ -27,55 +31,20 @@ namespace fn
 */
 class EncryptorDetector
 {
-    // FAN_CLASS_CONTENT - get event before user gets data
-    // FAN_NONBLOCK - non blocking read from file
-    // FAN_CLOEXEC - set this flag to newly opened files
-    static constexpr unsigned m_fanotifyFlags = FAN_CLOEXEC | FAN_CLASS_CONTENT | FAN_NONBLOCK;
-    // O_RDONLY - we do not modify files
-    // O_LARGEFILE - enable support for big files
-    static constexpr unsigned m_fanotifyEventFlags = O_RDONLY | O_LARGEFILE;
+    using time_point = std::chrono::time_point<std::chrono::high_resolution_clock>;
+    using clock = std::chrono::high_resolution_clock;
+    using ms = std::chrono::milliseconds;
 
-    // Flags that we pass to fanotify mark (events that we track)
-    static constexpr std::array<uint64_t, 8> m_markFlagsArray = {
-        FAN_ACCESS, 
-        FAN_ACCESS_PERM, 
-        FAN_MODIFY,
-        FAN_OPEN,
-        FAN_OPEN_PERM,
-        FAN_CLOSE,
-        FAN_CLOSE_NOWRITE,
-        FAN_CLOSE_WRITE,
-    };
     static constexpr unsigned m_markFlags = FAN_MARK_ADD | FAN_MARK_MOUNT;
+
+    Tracer m_tracer;
+    // Current config of detector
+    Config m_config;
 
     // Fanotify wrapper class that will be used to interact with fanotify C API
     FanotifyWrapper m_fanotify;
     // Mount point for fanotify
     std::string_view m_mount;
-
-    // Event type enum is required because fanotify has, for example, FAN_ACCESS_PERM and FAN_ACCESS that are both EVENT_READ
-    enum EventType
-    {
-        EVENT_READ,
-        EVENT_WRITE,
-        EVENT_OPEN,
-        EVENT_CLOSE,
-        EVENT_COUNT
-    };
-    
-    // Maximum amount of all kind of suspicious operations
-    // If any of events count exceeds maximum, it is considered suspicious
-    static constexpr std::array<size_t, EVENT_COUNT> m_fileIOSuspect = {
-        300, // EVENT_READ
-        300, // EVENT_WRITE
-    };
-    // Maximum life time of each event stored (in millieseconds)
-    static constexpr int64_t m_fileIOMaxAge = 150;
-    static constexpr const char* m_fileDbPath = "/etc/synthmoza/fileDb.sqlite3";
-
-    using time_point = std::chrono::time_point<std::chrono::high_resolution_clock>;
-    using clock = std::chrono::high_resolution_clock;
-    using ms = std::chrono::milliseconds;
 
     /*
         Proc Event struct describes certain event - its type and relative time it was added
@@ -105,20 +74,17 @@ class EncryptorDetector
         - check if any of processes is suspicious
     */
     std::map<int, ProcInfo> m_pidEventMap;
-    
-    // File Data Base contains copies of files that have been opened for writing
-    sqlite::FileDB m_fileDb;
+    // White list - list of paths to binaries that must not be considered as suspicious
+    std::vector<std::string> m_whiteList;
 
-    constexpr EventType FanotifyEventToIdx(size_t type);
-    std::string StringizeEventType(size_t type);
-
-    std::string GetFilenameByFd(int fd);
-    
     void ProcessEvent(fanotify_event_metadata& event);
+    void CheckForOutdatedEvents();
+    void ProcessEvents();
+    void CheckForSuspiciousPids();
 public:
-    EncryptorDetector(const char* mount);
-    
+    EncryptorDetector(const char* mount, const Config& cfg);
     void Launch();
+    ~EncryptorDetector() {}
 };
 
 }

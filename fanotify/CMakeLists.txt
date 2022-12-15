@@ -22,14 +22,20 @@ set(ENCRYPT_SOURCE
     ${SOURCE_DIR}/cryptor/encryptor.cpp
 )
 set(FANOTIFY_SOURCE
+    ${SOURCE_DIR}/fanotify/fanotify_helpers.cpp
     ${SOURCE_DIR}/fanotify/fanotify_wrapper.cpp
     ${SOURCE_DIR}/fanotify/detector.cpp
     ${SOURCE_DIR}/fanotify/fanotify.cpp
     
     ${SOURCE_DIR}/sqlite/sqlite3.c
     ${SOURCE_DIR}/sqlite/filedb.cpp
+
+    ${SOURCE_DIR}/config.cpp
 )
 
+# JSON lib for config
+set(JSON_BuildTests OFF CACHE INTERNAL "") # disable tests
+add_subdirectory(3rd_party/json-3.11.2)
 
 # encryptor executable
 add_executable(encrypt ${ENCRYPT_SOURCE})
@@ -40,5 +46,4 @@ find_package(Threads REQUIRED)
 # fanotify executable
 add_executable(fanotify ${FANOTIFY_SOURCE})
 target_include_directories(fanotify PRIVATE ${INCLUDE_DIR})
-
-target_link_libraries(fanotify PUBLIC ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(fanotify PRIVATE nlohmann_json::nlohmann_json)

@@ -5,17 +5,19 @@
 namespace fn
 {
 
+#define TRACE(tracer, message) tracer.Trace(message, __PRETTY_FUNCTION__, __LINE__);
+
 class Tracer
 {
-    static constexpr const char* traceFileName = "fanotify_trace.log";
-
     std::ofstream m_traceFile;
 public:
-    Tracer() : m_traceFile(traceFileName) {}
-    
-    void Trace(const char* message, const char* func, unsigned line)
+    Tracer(const char* traceFileName) : m_traceFile(traceFileName) {}
+    Tracer(const std::string& traceFileName) : m_traceFile(traceFileName) {}
+
+    template <typename T>
+    void Trace(T&& message, const char* func, unsigned line)
     {
-        m_traceFile << "[" << func << ":" << line << "]: " << message << std::endl;
+        m_traceFile << "[" << func << ":" << line << "] " << std::forward<T>(message) << std::endl;
     }
 };
 

@@ -10,9 +10,11 @@ int main(int argc, char* argv[])
         return -1;
     }
 
+
     try
     {
-        EncryptorDetector detector(argv[1]);
+        Config cfg = GetConfig();
+        EncryptorDetector detector(argv[1], cfg);
         detector.Launch();
     }
     catch (const std::exception& e)

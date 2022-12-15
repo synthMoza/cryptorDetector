@@ -70,6 +70,7 @@ std::vector<std::string> FileDB::GetFilesFromPid(int pid)
     int res = 0;
     while ((res = stmt.Step()) == SQLITE_ROW)
     {
+        std::cout << stmt.ColumnText(1) << std::endl; 
         files.push_back(std::string((char*) stmt.ColumnText(0))); // files can be always read like char* (not unsigned)
     }
 
