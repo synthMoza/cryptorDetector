@@ -1,4 +1,4 @@
-#include <fanotify_wrapper.h>
+#include <fanotify/fanotify_wrapper.h>
 
 #include <poll.h>
 #include <unistd.h>
@@ -14,9 +14,11 @@ FanotifyWrapper::FanotifyWrapper(unsigned flags, unsigned event_f_flags) :
     if (m_notificationGroupFd < 0)
         throw std::runtime_error("fanotify_init error");
     
+#ifndef DAEMON_FANOTIFY
     m_fds[STDIN_FD_IDX].fd = STDIN_FILENO;
     m_fds[STDIN_FD_IDX].events = POLLIN;
-    
+#endif
+
     m_fds[FANOTIFY_FD_IDX].fd = m_notificationGroupFd;
     m_fds[FANOTIFY_FD_IDX].events = POLLIN;
 }
@@ -38,6 +40,7 @@ bool FanotifyWrapper::WaitForEvent()
 
         if (pollNum > 0)
         {
+        #ifndef DAEMON_FANOTIFY
             if (m_fds[STDIN_FD_IDX].revents & POLLIN)
             {
                 char buf = 0;
@@ -46,12 +49,12 @@ bool FanotifyWrapper::WaitForEvent()
 
                 return false; // end
             }
-
+        #endif
             if (m_fds[FANOTIFY_FD_IDX].revents & POLLIN)
             {
                 return true;
             }
-        }    
+        }
     }
 
     return false; // unreachable code

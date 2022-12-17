@@ -1,10 +1,11 @@
-#include <fanotify_helpers.h>
+#include <fanotify/fanotify_helpers.h>
 
 // c++ include
 #include <sstream>
 #include <stdexcept>
 
 // c include
+#include <cstring>
 #include <unistd.h>
 
 namespace fn
@@ -128,7 +129,11 @@ std::string GetFilenameByFd(int fd)
     std::string fileName(PATH_MAX, ' ');
     auto pathLen = readlink(filePath.str().c_str(), fileName.data(), fileName.size());
     if (pathLen < 0)
-        throw std::runtime_error("readlink error");
+    {
+        std::string errmsg = "readlink error: ";
+        errmsg += strerror(pathLen);
+        throw std::runtime_error(errmsg);
+    }
     
     fileName.resize(pathLen);
     return fileName;

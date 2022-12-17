@@ -1,4 +1,4 @@
-#include <detector.h>
+#include <fanotify/detector.h>
 
 using namespace fn;
 
@@ -33,7 +33,7 @@ void EncryptorDetector::ProcessEvent(fanotify_event_metadata& event)
     for (auto& id : m_config.markFlags)
     {
     #ifdef DEBUG
-        stream.str(""); // flust stream
+        stream.str(""); // flush stream
     #endif
         if (IsEvent(event, id))
         {
@@ -161,8 +161,9 @@ void EncryptorDetector::CheckForSuspiciousPids()
 
 void EncryptorDetector::Launch()
 {
+    TRACE(m_tracer, "Starting the program... To finish the program, press enter");
+
     // set up main loop
-    std::cout << "Starting the program... To finish the program, press enter" << std::endl;
     while (m_fanotify.WaitForEvent())
     {
         CheckForOutdatedEvents();
@@ -170,6 +171,6 @@ void EncryptorDetector::Launch()
         CheckForSuspiciousPids();
     }
 
-    std::cout << "Finishing the program..." << std::endl;
+    TRACE(m_tracer, "Finishing the program...");
 }
 

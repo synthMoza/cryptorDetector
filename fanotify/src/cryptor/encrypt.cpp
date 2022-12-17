@@ -1,4 +1,4 @@
-#include <encrypt.h>
+#include <cryptor/encrypt.h>
 
 // c includes
 #include <sys/types.h>

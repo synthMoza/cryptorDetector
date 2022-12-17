@@ -1,3 +1,25 @@
+# Build project
+Project is built via CMake, so the procedure is pretty standard:
+```
+mkdir build
+cd build
+cmake ..
+cmake --build .
+```
+
+It generetaes several executables:
+1) *encrypt* - test program to emulate cryptor (like Petya or some other virus) to be detected by detector. Can be launched using:
+```
+./encrypt <file-or-directory>
+```
+It encrypts given file or directory recursively with hard-coded key.
+
+2) *fanotify* - detector program that uses fanotify to track suspicious proccesses. Can be launched as follows:
+```
+sudo ./fanotify <mount-point>
+```
+It will track events specified in config and kill suspicious programs (that look like cryptors) besides the one in white list.
+
 # Config
 Config is used to set up program settings. Default config is used whent there is no in */etc/synthmoza/fanotify_config.json*, you can find example config file in the source directory, modify and copy it to the */etc/synthmoza/fanotify_config.json*. Fields with their default values are as follows:
 

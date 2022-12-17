@@ -1,4 +1,4 @@
-#include <detector.h>
+#include <fanotify/detector.h>
 
 using namespace fn;
 

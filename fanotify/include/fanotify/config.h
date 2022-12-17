@@ -11,7 +11,7 @@
 #include <fstream>
 #include <filesystem>
 
-#include <fanotify_helpers.h>
+#include <fanotify/fanotify_helpers.h>
 
 namespace fn
 {
@@ -38,6 +38,7 @@ struct Config
 };
 
 Config GetConfig();
+Config GetDaemonConfig();
 
 };
 

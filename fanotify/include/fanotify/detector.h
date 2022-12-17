@@ -1,11 +1,11 @@
 #ifndef DETECTOR_HEADER
 #define DETECTOR_HEADER
 
-#include <fanotify_wrapper.h>
+#include <fanotify/fanotify_wrapper.h>
+#include <fanotify/fanotify_helpers.h>
+#include <fanotify/config.h>
 #include <sqlite/filedb.h>
-#include <fanotify_helpers.h>
-#include <config.h>
-#include <tracer.h>
+#include <tracer/tracer.h>
 
 // c++ include
 #include <iostream>

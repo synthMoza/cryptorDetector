@@ -114,9 +114,14 @@ public:
     }
 };
 
+#ifndef DAEMON_FANOTIFY
 constexpr nfds_t NFDS = 2; // number of file descriptors for poll
-constexpr size_t STDIN_FD_IDX = STDIN_FILENO;
-constexpr size_t FANOTIFY_FD_IDX = 1;
+constexpr size_t STDIN_FD_IDX = 1;
+#else
+constexpr nfds_t NFDS = 1; // number of file descriptors for poll
+#endif
+constexpr size_t FANOTIFY_FD_IDX = 0;
+
 
 /**
  * @brief Event Container incapsulates events on current bufferized read ans allows to iterate over them easily

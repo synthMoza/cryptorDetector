@@ -22,15 +22,25 @@ set(ENCRYPT_SOURCE
     ${SOURCE_DIR}/cryptor/encryptor.cpp
 )
 set(FANOTIFY_SOURCE
+    ${SOURCE_DIR}/fanotify/config.cpp
+    ${SOURCE_DIR}/fanotify/detector.cpp
     ${SOURCE_DIR}/fanotify/fanotify_helpers.cpp
     ${SOURCE_DIR}/fanotify/fanotify_wrapper.cpp
-    ${SOURCE_DIR}/fanotify/detector.cpp
     ${SOURCE_DIR}/fanotify/fanotify.cpp
     
     ${SOURCE_DIR}/sqlite/sqlite3.c
     ${SOURCE_DIR}/sqlite/filedb.cpp
+)
 
-    ${SOURCE_DIR}/config.cpp
+set(FANOTIFY_DAEMON_SOURCE
+    ${SOURCE_DIR}/fanotify/config.cpp
+    ${SOURCE_DIR}/fanotify/detector.cpp
+    ${SOURCE_DIR}/fanotify/fanotify_helpers.cpp
+    ${SOURCE_DIR}/fanotify/fanotify_wrapper.cpp
+    ${SOURCE_DIR}/fanotify/fanotify_daemon.cpp
+    
+    ${SOURCE_DIR}/sqlite/sqlite3.c
+    ${SOURCE_DIR}/sqlite/filedb.cpp
 )
 
 # JSON lib for config
@@ -47,3 +57,9 @@ find_package(Threads REQUIRED)
 add_executable(fanotify ${FANOTIFY_SOURCE})
 target_include_directories(fanotify PRIVATE ${INCLUDE_DIR})
 target_link_libraries(fanotify PRIVATE nlohmann_json::nlohmann_json)
+
+# fanotify daemon
+add_executable(fanotify_daemon ${FANOTIFY_DAEMON_SOURCE})
+target_include_directories(fanotify_daemon PRIVATE ${INCLUDE_DIR})
+target_link_libraries(fanotify_daemon PRIVATE nlohmann_json::nlohmann_json)
+target_compile_definitions(fanotify_daemon PUBLIC DAEMON_FANOTIFY)
