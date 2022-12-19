@@ -37,9 +37,9 @@ int daemon(const char* mount)
     try
     {
         Config cfg = GetDaemonConfig();
-        TRACE(tracer, "got daemon config");
+        TRACE(tracer, "Got daemon config");
         EncryptorDetector detector(mount, cfg);
-        TRACE(tracer, "init detector");
+        TRACE(tracer, "Initialized detector");
         detector.Launch();
     }
     catch (const std::exception& e)
@@ -52,13 +52,8 @@ int daemon(const char* mount)
     return 0;
 }
 
-int main(int argc, char* argv[])
+int main()
 {
-    if (argc != 2)
-    {
-        // std::cerr << "Usage: ./fanotify <mount>" << std::endl;
-        return -1;
-    }
-
-    return daemon(argv[1]);
+    const char* mountPoint = "/";
+    return daemon(mountPoint);
 }

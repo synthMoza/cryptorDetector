@@ -2,6 +2,7 @@
 #define TRACER_HEADER
 
 #include <fstream>
+
 namespace fn
 {
 

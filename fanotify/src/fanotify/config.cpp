@@ -27,12 +27,12 @@ static Config GetDefaultConfig()
             FAN_CLOSE_WRITE,
         },
         .fileIOSuspect = {
-            .reads = 300,
-            .writes = 300,
+            .reads = 100,
+            .writes = 100,
         },
         .fileIOMaxAge = 150,
     #ifndef DAEMON_FANOTIFY
-        .logPath = "/var/synthmoza/fanotify_trace.log",
+        .logPath = "/etc/synthmoza/fanotify_trace.log",
     #else
         .logPath = "/var/log/syslog",
     #endif

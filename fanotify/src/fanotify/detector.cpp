@@ -9,6 +9,9 @@ EncryptorDetector::EncryptorDetector(const char* mount, const Config& cfg) :
     m_mount(mount),
     m_pidEventMap()
 {
+    // trace and create trace file if it doesnt exist
+    TRACE(m_tracer, "Initializing detector");
+
     // initialize fanotify
     uint64_t markMask = 0;
     for (auto& flag : cfg.markFlags)
@@ -18,6 +21,8 @@ EncryptorDetector::EncryptorDetector(const char* mount, const Config& cfg) :
     // ignore log file
     m_fanotify.Mark(FAN_MARK_ADD | FAN_MARK_IGNORED_MASK | FAN_MARK_IGNORED_SURV_MODIFY,
         FAN_OPEN_PERM | FAN_CLOSE_WRITE, AT_FDCWD, cfg.logPath);
+    
+    TRACE(m_tracer, "Initialization completed");
 }
 
 void EncryptorDetector::ProcessEvent(fanotify_event_metadata& event)

@@ -63,3 +63,9 @@ add_executable(fanotify_daemon ${FANOTIFY_DAEMON_SOURCE})
 target_include_directories(fanotify_daemon PRIVATE ${INCLUDE_DIR})
 target_link_libraries(fanotify_daemon PRIVATE nlohmann_json::nlohmann_json)
 target_compile_definitions(fanotify_daemon PUBLIC DAEMON_FANOTIFY)
+
+# after build we want to copy binary daemon to /usr/local/bin and run it from there 
+install(TARGETS fanotify_daemon RUNTIME DESTINATION /usr/local/bin)
+
+# copy config to /etc/synthmoza/fanotify_config.json
+install(FILES ${CMAKE_SOURCE_DIR}/fanotify_config.json DESTINATION /etc/synthmoza)
