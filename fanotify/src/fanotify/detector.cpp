@@ -166,7 +166,11 @@ void EncryptorDetector::CheckForSuspiciousPids()
 
 void EncryptorDetector::Launch()
 {
+#ifndef DAEMON_FANOTIFY
     TRACE(m_tracer, "Starting the program... To finish the program, press enter");
+#else
+    TRACE(m_tracer, "Starting the program...");
+#endif
 
     // set up main loop
     while (m_fanotify.WaitForEvent())

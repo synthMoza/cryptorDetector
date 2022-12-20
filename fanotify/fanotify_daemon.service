@@ -4,9 +4,9 @@ After=syslog.target
 
 [Service]
 Type=forking
-PIDFile=/run/fanotify_detector.pid
+PIDFile=/run/fanotify_daemon.pid
 ExecStart=/usr/local/bin/fanotify_daemon
-ExecReload=/bin/kill -HUP $MAINPID
+ExecReload=/usr/local/bin/fanotify_daemon
 Restart=always
 StartLimitInterval=0
 

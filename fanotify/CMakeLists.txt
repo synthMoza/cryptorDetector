@@ -69,3 +69,6 @@ install(TARGETS fanotify_daemon RUNTIME DESTINATION /usr/local/bin)
 
 # copy config to /etc/synthmoza/fanotify_config.json
 install(FILES ${CMAKE_SOURCE_DIR}/fanotify_config.json DESTINATION /etc/synthmoza)
+
+# copy service unit
+install(FILES ${CMAKE_SOURCE_DIR}/fanotify_daemon.service DESTINATION /etc/systemd/system)

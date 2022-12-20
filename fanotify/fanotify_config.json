@@ -20,7 +20,6 @@
         "FAN_CLOSE_WRITE"
     ],
     "white_list": [
-        "/usr/bin/git",
-        "/home/synthmoza/Repository/sysProgMipt/fanotify/build/encrypt"
+        "/usr/bin/git"
     ]
 }
