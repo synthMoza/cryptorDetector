@@ -1,5 +1,5 @@
 # Detector overview
-This program might be called a childish antivirus - it only protects against encryptors and should be configured carefuly. It uses *fanotify* to catch system calls to filesystem and tracks statistics on all processes that interact with filesystem. If it is considered suspicious, it is being killed. *Metric for suspicious* is maximum amount of reads and writes for given amount of time, that can be customised in config.Also it has *whitelist* for all programs that should not be considered encryptors (for example, */usr/bin/git* performs a lot of reads and writes in short period of time, but it is not an encryptor).
+This program might be called a childish antivirus - it only protects against encryptors and should be configured carefuly. It uses *fanotify* to catch system calls to filesystem and tracks statistics on all processes that interact with filesystem. If it is considered suspicious, it is being killed. *Metric for suspicious* is maximum amount of reads and writes for given amount of time, that can be customised in config. Also it has a *whitelist* for all programs that should not be considered encryptors (for example, */usr/bin/git* performs a lot of reads and writes in short period of time, but it is not an encryptor).
 
 # Build project
 Project is built via CMake, so the procedure is pretty standard:
@@ -10,7 +10,12 @@ cmake ..
 cmake --build .
 ```
 
-It generetaes several executables:
+Also, do not forget to install default configs and service ini file:
+```
+sudo make install
+```
+
+Several executables are geenrated:
 1) *encrypt* - test program to emulate cryptor (like Petya or some other virus) to be detected by detector. Can be launched using:
 ```
 ./encrypt <file-or-directory>
@@ -23,13 +28,15 @@ sudo ./fanotify <mount-point>
 ```
 It will track events specified in config and kill suspicious programs (that look like cryptors) besides the one in white list.
 
-3) *fanotify_daemon* - same program, but this one is a daemon. Writes all logs to */var/log/syslog*. Can be lacunhed like the *fanotify* program:
+3) *fanotify_daemon* - same program, but this one is a daemon. Writes all logs to */var/log/syslog*. Can be launched via *systemctl*:
 ```
-sudo ./fanotify_daemon <mount_point>
+systemctl start fanotify_daemon  # start service
+systemctl status fanotify_daemon # check service status
+systemctl enable fanotify_daemon # auto start service when system reboots
 ```
 
 # Config
-Config is used to set up program settings. Default config is used whent there is no in */etc/synthmoza/fanotify_config.json*, you can find example config file in the source directory, modify and copy it to the */etc/synthmoza/fanotify_config.json*. Fields with their default values are as follows:
+Config is used to set up program settings. Default config is used whent there is no in */etc/synthmoza/fanotify_config.json*, you can find example config file in the source directory. Fields with their default values are as follows:
 
 1) ```"log_file_path": "/etc/synthmoza/fanotify.log"``` - path to the log file where program will trace events depending on the build type. In release it will only report suspicious pids,  in debug it will additionally report each event it catches and more debug info.
 This field is ignored in daemon, at it should write only to */var/log/syslog*.
