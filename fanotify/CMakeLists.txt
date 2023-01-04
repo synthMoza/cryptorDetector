@@ -17,13 +17,58 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(SOURCE_DIR src)
 set(INCLUDE_DIR include)
 
-set(ENCRYPT_SOURCE ${SOURCE_DIR}/encrypt.cpp)
-set(FANOTIFY_SOURCE ${SOURCE_DIR}/fanotify_wrapper.cpp ${SOURCE_DIR}/fanotify.cpp)
+set(ENCRYPT_SOURCE 
+    ${SOURCE_DIR}/cryptor/encrypt.cpp
+    ${SOURCE_DIR}/cryptor/encryptor.cpp
+)
+set(FANOTIFY_SOURCE
+    ${SOURCE_DIR}/fanotify/config.cpp
+    ${SOURCE_DIR}/fanotify/detector.cpp
+    ${SOURCE_DIR}/fanotify/fanotify_helpers.cpp
+    ${SOURCE_DIR}/fanotify/fanotify_wrapper.cpp
+    ${SOURCE_DIR}/fanotify/fanotify.cpp
+    
+    ${SOURCE_DIR}/sqlite/sqlite3.c
+    ${SOURCE_DIR}/sqlite/filedb.cpp
+)
+
+set(FANOTIFY_DAEMON_SOURCE
+    ${SOURCE_DIR}/fanotify/config.cpp
+    ${SOURCE_DIR}/fanotify/detector.cpp
+    ${SOURCE_DIR}/fanotify/fanotify_helpers.cpp
+    ${SOURCE_DIR}/fanotify/fanotify_wrapper.cpp
+    ${SOURCE_DIR}/fanotify/fanotify_daemon.cpp
+    
+    ${SOURCE_DIR}/sqlite/sqlite3.c
+    ${SOURCE_DIR}/sqlite/filedb.cpp
+)
+
+# JSON lib for config
+set(JSON_BuildTests OFF CACHE INTERNAL "") # disable tests
+add_subdirectory(3rd_party/json-3.11.2)
 
 # encryptor executable
 add_executable(encrypt ${ENCRYPT_SOURCE})
 target_include_directories(encrypt PRIVATE ${INCLUDE_DIR})
 
+find_package(Threads REQUIRED)
+
 # fanotify executable
 add_executable(fanotify ${FANOTIFY_SOURCE})
 target_include_directories(fanotify PRIVATE ${INCLUDE_DIR})
+target_link_libraries(fanotify PRIVATE nlohmann_json::nlohmann_json)
+
+# fanotify daemon
+add_executable(fanotify_daemon ${FANOTIFY_DAEMON_SOURCE})
+target_include_directories(fanotify_daemon PRIVATE ${INCLUDE_DIR})
+target_link_libraries(fanotify_daemon PRIVATE nlohmann_json::nlohmann_json)
+target_compile_definitions(fanotify_daemon PUBLIC DAEMON_FANOTIFY)
+
+# after build we want to copy binary daemon to /usr/local/bin and run it from there 
+install(TARGETS fanotify_daemon RUNTIME DESTINATION /usr/local/bin)
+
+# copy config to /etc/synthmoza/fanotify_config.json
+install(FILES ${CMAKE_SOURCE_DIR}/fanotify_config.json DESTINATION /etc/synthmoza)
+
+# copy service unit
+install(FILES ${CMAKE_SOURCE_DIR}/fanotify_daemon.service DESTINATION /etc/systemd/system)

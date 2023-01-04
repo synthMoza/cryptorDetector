@@ -1,0 +1,14 @@
+[Unit]
+Description=Fanotify-based encryptors detector
+After=syslog.target
+
+[Service]
+Type=forking
+PIDFile=/run/fanotify_daemon.pid
+ExecStart=/usr/local/bin/fanotify_daemon
+ExecReload=/usr/local/bin/fanotify_daemon
+Restart=always
+StartLimitInterval=0
+
+[Install]
+WantedBy=multi-user.target

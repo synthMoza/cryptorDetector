@@ -1,0 +1,25 @@
+{
+    "log_file_path": "/etc/synthmoza/fanotify.log",
+    "event_read_suspect": 100,
+    "event_write_suspect": 100,
+    "event_lifetime_ms": 150,
+    "fanotify_flags": [
+        "FAN_CLOEXEC",
+        "FAN_CLASS_CONTENT",
+        "FAN_NONBLOCK"
+    ],
+    "event_flags": [
+        "O_RDONLY",
+        "O_LARGEFILE"
+    ],
+    "event_track": [
+        "FAN_OPEN",
+        "FAN_OPEN_PERM",
+        "FAN_CLOSE",
+        "FAN_CLOSE_NOWRITE",
+        "FAN_CLOSE_WRITE"
+    ],
+    "white_list": [
+        "/usr/bin/git"
+    ]
+}
